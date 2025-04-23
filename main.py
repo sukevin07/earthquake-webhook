@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import time
 
 CWB_API_URL = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0015-001"
 API_KEY = "CWA-6939BEE8-C910-4361-BC69-43F46EC3FD76"
@@ -18,7 +19,10 @@ def save_last_event_id(event_id):
 
 def fetch_latest_earthquake():
     try:
-        res = requests.get(CWB_API_URL)
+        headers = {"Authorization": API_KEY}
+        print("抓取地震資料中...")
+        res = requests.get(CWB_API_URL, headers=headers, timeout=10)
+        print("資料成功取得")
         data = res.json()
         records = data["records"]["earthquake"]
         if not records:
@@ -42,18 +46,22 @@ def send_to_webhook(earthquake):
     res = requests.post(WEBHOOK_URL, json=payload)
     print("Webhook sent:", res.status_code, res.text)
 
-def main():
-    last_event_id = load_last_event_id()
-    latest_eq = fetch_latest_earthquake()
-    if latest_eq is None:
-        return
-    event_id = latest_eq["earthquakeNo"]
-    if event_id != last_event_id:
-        print("New earthquake detected:", event_id)
-        send_to_webhook(latest_eq)
-        save_last_event_id(event_id)
-    else:
-        print("No new earthquake.")
+def main_loop():
+    while True:
+        last_event_id = load_last_event_id()
+        latest_eq = fetch_latest_earthquake()
+        if latest_eq is None:
+            print("No earthquake detected.")
+        else:
+            event_id = latest_eq["earthquakeNo"]
+            if event_id != last_event_id:
+                print("New earthquake detected:", event_id)
+                send_to_webhook(latest_eq)
+                save_last_event_id(event_id)
+            else:
+                print("No new earthquake detected.")
+        print("等待 30 秒...")
+        time.sleep(30)
 
 if __name__ == "__main__":
-    main()
+    main_loop()
