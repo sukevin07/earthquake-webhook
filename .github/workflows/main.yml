@@ -2,7 +2,7 @@ name: Earthquake Monitor
 
 on:
   schedule:
-    - cron: '*/1 * * * *'  # 每分鐘運行一次
+    - cron: '*/5 * * * *'  # 每分鐘運行一次
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
