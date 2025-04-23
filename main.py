@@ -2,8 +2,9 @@ import requests
 import json
 import os
 
-WEBHOOK_URL = "https://hook.eu2.make.com/wa0099sdc5iorkyfaf8yqhv84iab98af"
 CWB_API_URL = "https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0015-001"
+API_KEY = "CWA-6939BEE8-C910-4361-BC69-43F46EC3FD76"
+WEBHOOK_URL = "https://hook.eu2.make.com/wa0099sdc5iorkyfaf8yqhv84iab98af"
 
 def load_last_event_id():
     if os.path.exists("last_event_id.txt"):
