@@ -4,7 +4,7 @@ import os
 
 API_KEY = "CWA-6939BEE8-C910-4361-BC69-43F46EC3FD76"
 WEBHOOK_URL = "https://hook.eu2.make.com/wa0099sdc5iorkyfaf8yqhv84iab98af"
-CWB_API_URL = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0015-001?Authorization={API_KEY}"
+CWB_API_URL = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authorization={API_KEY}"
 
 def load_last_event_id():
     if os.path.exists("last_event_id.txt"):
