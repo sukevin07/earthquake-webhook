@@ -48,25 +48,21 @@ def send_to_webhook(earthquake):
     }
     try:
         res = requests.post(WEBHOOK_URL, json=payload)
-        print("Webhook sent. Status code:", res.status_code)
-        print("Response text:", res.text)
+        if res.status_code == 200:
+            print("Webhook sent successfully.")
+        else:
+            print(f"Webhook failed. Status code: {res.status_code}. Retrying...")
+            retry = requests.post(WEBHOOK_URL, json=payload)
+            print("Retry status:", retry.status_code)
     except Exception as e:
         print("Webhook error:", e)
-
-def send_no_earthquake_message():
-    payload = {"message": "No new earthquake detected."}
-    try:
-        res = requests.post(WEBHOOK_URL, json=payload)
-        print("Webhook (no quake) sent. Status code:", res.status_code)
-    except Exception as e:
-        print("Webhook (no quake) error:", e)
 
 def main():
     last_event_id = load_last_event_id()
     latest_eq = fetch_latest_earthquake()
 
     if latest_eq is None:
-        send_no_earthquake_message()
+        print("No new earthquake detected.")
         return
 
     current_event_id = latest_eq["earthquakeNo"]
@@ -79,12 +75,6 @@ def main():
         save_last_event_id(current_event_id)
     else:
         print("No new earthquake detected.")
-        send_no_earthquake_message()
-
-# 可加入自動迴圈（非必要，如在 VPS 長期執行可打開）
-# while True:
-#     main()
-#     time.sleep(60)
 
 if __name__ == "__main__":
     main()
